@@ -1,6 +1,7 @@
 package com.edu.empresa.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,6 +12,8 @@ public class JsonManagerCDT {
 
     public JsonManagerCDT() {
         this.mapper = new ObjectMapper();
+        // Esta línea habilita el formato estructurado (pretty print) en el JSON
+        this.mapper.enable(SerializationFeature.INDENT_OUTPUT);
         this.rutaArchivo = "historico_cdts.json";
     }
 

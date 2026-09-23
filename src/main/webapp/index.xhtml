@@ -11,116 +11,122 @@
     </h:head>
     <h:body>
         
-        <!-- Sección Informativa -->
         <div class="info-section">
             <p:panel header="¿Qué es un CDT?" styleClass="custom-panel">
-                <h:outputText value="Un Certificado de Depósito a Término (CDT) es un instrumento de inversión mediante el cual depositas una cantidad de dinero en una entidad financiera por un plazo determinado. A cambio, la entidad te devuelve el dinero invertido más unos intereses generados a una tasa fija pactada desde el inicio." />
+                <h:outputText value="Un Certificado de Depósito a Término (CDT) es un instrumento de inversión mediante el cual depositas una cantidad de dinero en una entidad financiera por un plazo determinado. A cambio, la entidad te devuelve el dinero invertido más unos intereses." />
             </p:panel>
         </div>
 
         <h:form id="formularioCdt">
             <p:growl id="msgs" showDetail="true" />
             
-            <p:panel header="Simulador CDT - Registro" styleClass="custom-panel">
+            <p:panel header="#{cdtBean.modoEdicion ? 'Editar CDT' : 'Simulador CDT - Registro'}" styleClass="custom-panel">
                 
-                <h:panelGrid columns="2" cellpadding="7" styleClass="form-grid">
-                    
-                    <!-- Datos del Usuario -->
-                    
-                    
-                    <h:outputLabel value="Identificacion" for="docId"/>
-                    <p:inputText id="docId" value="#{cdtBean.cdt.cliente.docId}" required="true" requiredMessage="El documento es obligatorio"/>
-                    
-                    
-                    <h:outputLabel value="Nombre(s):" for="nombre"/>
-                    <p:inputText id="nombre" value="#{cdtBean.cdt.cliente.nombre}" required="true" requiredMessage="El nombre es obligatorio" placeholder="Ej: Juan"/>
+                <div class="ui-fluid">
+                    <p:panelGrid columns="4" layout="grid" columnClasses="ui-grid-col-2, ui-grid-col-4, ui-grid-col-2, ui-grid-col-4">
+                        
+                        <p:outputLabel value="Identificación:" for="docId"/>
+                        <p:inputText id="docId" value="#{cdtBean.cdt.cliente.docId}" required="true" requiredMessage="La identificación es obligatoria"/>
 
-                    <h:outputLabel value="Apellidos:" for="apellido"/>
-                    <p:inputText id="apellido" value="#{cdtBean.cdt.cliente.apellido}" required="true" requiredMessage="El apellido es obligatorio" placeholder="Ej: Pérez"/>
+                        <p:outputLabel value="Nombre(s):" for="nombre"/>
+                        <p:inputText id="nombre" value="#{cdtBean.cdt.cliente.nombre}" required="true" requiredMessage="El nombre es obligatorio"/>
 
-                    <h:outputLabel value="Correo Electrónico:" for="correo"/>
-                    <p:inputText id="correo" value="#{cdtBean.cdt.cliente.correo}" required="true" requiredMessage="El correo es obligatorio" type="email" placeholder="ejemplo@correo.com"/>
+                        <p:outputLabel value="Apellidos:" for="apellido"/>
+                        <p:inputText id="apellido" value="#{cdtBean.cdt.cliente.apellido}" required="true" requiredMessage="El apellido es obligatorio"/>
 
-                    <h:outputLabel value="Teléfono:" for="telefono"/>
-                    <p:inputText id="telefono" value="#{cdtBean.cdt.cliente.telefono}" required="true" requiredMessage="El teléfono es obligatorio"/>
+                        <p:outputLabel value="Correo Electrónico:" for="correo"/>
+                        <p:inputText id="correo" value="#{cdtBean.cdt.cliente.correo}" required="true" requiredMessage="El correo es obligatorio" type="text"/>
 
+                        <p:outputLabel value="Teléfono:" for="telefono"/>
+                        <p:inputText id="telefono" value="#{cdtBean.cdt.cliente.telefono}" required="true" requiredMessage="El teléfono es obligatorio"/>
 
+                        <p:outputLabel for="inversion" value="Inversión ($):"/>
+                        <p:inputNumber id="inversion" value="#{cdtBean.cdt.inversion}" required="true" requiredMessage="La inversión es obligatoria" decimalPlaces="2" symbol="$ "/>
 
+                        <p:outputLabel for="tasa" value="Tasa anual (%):"/>
+                        <p:inputNumber id="tasa" value="#{cdtBean.cdt.tasaInteresesAnual}" required="true" requiredMessage="La tasa es obligatoria" decimalPlaces="2" symbol="%" symbolPosition="s"/>
 
-                    <!-- Parámetros del CDT -->
-                    <h:outputLabel for="inversion" value="Valor a invertir ($):"/>
-                    <p:inputNumber id="inversion" value="#{cdtBean.cdt.inversion}" 
-                                   required="true" requiredMessage="La inversión es obligatoria"
-                                   minValue="2000000" decimalPlaces="2" symbol="$"
-                                   validatorMessage="El valor a invertir debe ser mínimo $2.000.000"/>
-
-                    <h:outputLabel for="tasa" value="Tasa de interés anual (%):"/>
-                    <p:inputNumber id="tasa" value="#{cdtBean.cdt.tasaInteresesAnual}" 
-                                   required="true" requiredMessage="La tasa es obligatoria" 
-                                   decimalPlaces="2" symbol="%" symbolPosition="s"
-                                   placeholder="Ej: 12.5"/>
-
-                    <h:outputLabel for="plazo" value="Número de días:"/>
-                    <p:spinner id="plazo" value="#{cdtBean.cdt.plazoDias}" 
-                               required="true" requiredMessage="El plazo es obligatorio"
-                               min="30" validatorMessage="El plazo mínimo es de 30 días"/>
-                </h:panelGrid>
+                        <p:outputLabel for="plazo" value="Plazo (Días):"/>
+                        <p:spinner id="plazo" value="#{cdtBean.cdt.plazoDias}" required="true" requiredMessage="El plazo es obligatorio" />
+                        
+                    </p:panelGrid>
+                </div>
 
                 <p:divider />
 
-                <p:commandButton value="Calcular y Guardar" action="#{cdtBean.calcular}" update="formularioCdt, tablaResultados, msgs" styleClass="ui-button-success" icon="pi pi-check" />
-                <p:commandButton value="Limpiar" action="#{cdtBean.limpiar}" update="formularioCdt" immediate="true" styleClass="ui-button-secondary" icon="pi pi-refresh" style="margin-left: 10px;" />
+                <p:commandButton value="#{cdtBean.modoEdicion ? 'Actualizar CDT' : 'Calcular y Guardar'}" action="#{cdtBean.calcular}" update="formularioCdt, :formTabla, msgs" styleClass="ui-button-success" icon="pi pi-check" />
+                <p:commandButton value="Limpiar / Cancelar" action="#{cdtBean.limpiar}" process="@this" update="formularioCdt" styleClass="ui-button-secondary" icon="pi pi-times" style="margin-left: 10px;" />
             </p:panel>
         </h:form>
 
-        <!-- Tabla de Datos (Usuario y Cálculos) -->
         <div class="table-section">
-            <p:panel header="Datos Calculados y Registrados" styleClass="custom-panel">
-                <p:dataTable id="tablaResultados" value="#{cdtBean.listaHistorico}" var="hist" emptyMessage="No hay registros de CDT." paginator="true" rows="5">
-                    
-                    <p:column headerText="Cliente">
-                        <h:outputText value="#{hist.cliente.nombre} #{hist.cliente.apellido}" />
-                    </p:column>
-                    
-                    <p:column headerText="Contacto">
-                        <h:outputText value="#{hist.cliente.telefono} - #{hist.cliente.correo}" />
-                    </p:column>
+            <h:form id="formTabla">
+                <p:panel header="Datos Calculados y Registrados" styleClass="custom-panel">
+                    <p:dataTable id="tablaResultados" value="#{cdtBean.listaHistorico}" var="hist" emptyMessage="No hay registros." responsiveLayout="scroll">
+                        
+                        <p:column headerText="Documento">
+                            <h:outputText value="#{hist.cliente.docId}" />
+                        </p:column>
+                        
+                        <p:column headerText="Cliente">
+                            <h:outputText value="#{hist.cliente.nombre} #{hist.cliente.apellido}" />
+                        </p:column>
 
-                    <p:column headerText="Días">
-                        <h:outputText value="#{hist.plazoDias}" />
-                    </p:column>
+                        <p:column headerText="Inversión">
+                            <h:outputText value="#{hist.inversion}">
+                                <f:convertNumber type="currency" currencySymbol="$" maxFractionDigits="2"/>
+                            </h:outputText>
+                        </p:column>
+                        
+                        <p:column headerText="Ganancia antes de retención">
+                            <h:outputText value="#{hist.gananciaBruta}">
+                                <f:convertNumber type="currency" currencySymbol="$" maxFractionDigits="2"/>
+                            </h:outputText>
+                        </p:column>
 
-                    <p:column headerText="Inversión">
-                        <h:outputText value="#{hist.inversion}">
-                            <f:convertNumber type="currency" currencySymbol="$" maxFractionDigits="2"/>
-                        </h:outputText>
-                    </p:column>
-                    
-                    <p:column headerText="Tasa">
-                        <h:outputText value="#{hist.tasaInteresesAnual}%" />
-                    </p:column>
+                        <p:column headerText="Retención">
+                            <h:outputText value="#{hist.retencionFuente}">
+                                <f:convertNumber type="currency" currencySymbol="$" maxFractionDigits="2"/>
+                            </h:outputText>
+                        </p:column>
+                        
+                        <p:column headerText="Ganancia Neta">
+                            <h:outputText value="#{hist.gananciaNeta}">
+                                <f:convertNumber type="currency" currencySymbol="$" maxFractionDigits="2"/>
+                            </h:outputText>
+                        </p:column>
+                        
+                        <p:column headerText="Ganancia Total">
+                            <strong>
+                                <h:outputText value="#{hist.valorTotal}">
+                                    <f:convertNumber type="currency" currencySymbol="$" maxFractionDigits="2"/>
+                                </h:outputText>
+                            </strong>
+                        </p:column>
 
-                    <p:column headerText="Ganancia Bruta">
-                        <h:outputText value="#{hist.gananciaBruta}">
-                            <f:convertNumber type="currency" currencySymbol="$" maxFractionDigits="2"/>
-                        </h:outputText>
-                    </p:column>
-                    
-                    <p:column headerText="Ganancia Neta">
-                        <h:outputText value="#{hist.gananciaNeta}">
-                            <f:convertNumber type="currency" currencySymbol="$" maxFractionDigits="2"/>
-                        </h:outputText>
-                    </p:column>
+                        <p:column headerText="Acciones" style="width:120px; text-align: center;">
+                            <p:commandButton icon="pi pi-pencil" action="#{cdtBean.perpararEdicion(hist)}" process="@this" update=":formularioCdt" styleClass="ui-button-warning rounded-button ui-button-flat" title="Editar"/>
+                            
+                            <p:commandButton icon="pi pi-trash" action="#{cdtBean.eliminar(hist.cliente.docId)}" process="@this" update=":formTabla, :formularioCdt:msgs" styleClass="ui-button-danger rounded-button ui-button-flat" title="Eliminar">
+                                <p:confirm header="Confirmación" message="¿Eliminar este CDT?" icon="pi pi-info-circle"/>
+                            </p:commandButton>
+                        </p:column>
 
-                </p:dataTable>
-            </p:panel>
+                    </p:dataTable>
+                </p:panel>
+            </h:form>
         </div>
+        
+        <h:form id="formConfirmacion">
+            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade" responsive="true" width="350">
+                <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no ui-button-flat"/>
+                <p:commandButton value="Sí" type="button" styleClass="ui-confirmdialog-yes" />
+            </p:confirmDialog>
+        </h:form>
 
-        <!-- Footer requerido -->
         <div class="footer">
-            <p>Desarrollado por: Mary Leany Vaquiro Cardozo y Fredy Antonio Linares Guerrero</p>
-            <p>Código: 20241578069, 20231678009</p>
-            <p>Asignatura: Programación por componentes</p>
+            <p>Desarrollado por: Mary Leany Vaquiro Cardozo y Shaila Lorena Mosquera Guevara</p>
+            <p>Código Asignatura: [Ingresar Código Aquí]</p>
         </div>
 
     </h:body>

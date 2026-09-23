@@ -16,7 +16,14 @@ public class CDTService {
     }
 
     public List<CDT> obtenerHistorico() {
-        return jsonManager.leerLista(RUTA_ARCHIVO, CDT.class);
+        List<CDT> historico = jsonManager.leerLista(RUTA_ARCHIVO, CDT.class);
+        // RECALCULAR los valores ignorados en el JSON para que no salgan en 0
+        if (historico != null) {
+            for (CDT cdt : historico) {
+                cdt.calcularCDT();
+            }
+        }
+        return historico;
     }
 
     public CDT guardarNuevoCDT(Cliente cliente, double inversion, int plazoDias, double tasa) {
@@ -35,23 +42,32 @@ public class CDTService {
 
     public CDT actualizarCDT(String docId, Cliente cliente, double inversion, int plazoDias, double tasa) {
         List<CDT> historico = obtenerHistorico();
-        for (CDT cdt : historico) {
-            if (cdt.getCliente().getDocId().equals(docId)) {
-                cdt.setCliente(cliente);
-                cdt.setInversion(inversion);
-                cdt.setPlazoDias(plazoDias);
-                cdt.setTasaInteresesAnual(tasa);
-                cdt.calcularCDT();
+        for (int i = 0; i < historico.size(); i++) {
+            if (historico.get(i).getCliente().getDocId().equals(docId)) {
+                // Crear una nueva instancia limpia para reemplazar la anterior
+                CDT actualizado = new CDT(cliente);
+                actualizado.setInversion(inversion);
+                actualizado.setPlazoDias(plazoDias);
+                actualizado.setTasaInteresesAnual(tasa);
+                actualizado.calcularCDT();
+                
+                historico.set(i, actualizado);
                 jsonManager.guardarLista(RUTA_ARCHIVO, historico);
-                return cdt;
+                return actualizado;
             }
         }
         return null;
     }
-
     public boolean eliminarCDT(String docId) {
         List<CDT> historico = obtenerHistorico();
-        boolean eliminado = historico.removeIf(cdt -> cdt.getCliente().getDocId().equals(docId));
+        boolean eliminado = false;
+        for (int i = 0; i < historico.size(); i++) {
+            if (historico.get(i).getCliente().getDocId().equals(docId)) {
+                historico.remove(i);
+                eliminado = true;
+                break; // Rompe el ciclo para eliminar solo UNO
+            }
+        }
         if (eliminado) {
             jsonManager.guardarLista(RUTA_ARCHIVO, historico);
         }
