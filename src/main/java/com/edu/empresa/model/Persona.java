@@ -1,15 +1,15 @@
 package com.edu.empresa.model;
 
-public class Personas {
+public class Persona {
     protected String docId;
     protected String nombre;
     protected String apellido;
     protected String correo;
     protected String telefono;
 
-    public Personas() {}
+    public Persona() {}
 
-    public Personas(String docId, String nombre, String apellido, String correo, String telefono) {
+    public Persona(String docId, String nombre, String apellido, String correo, String telefono) {
         this.docId = docId;
         this.nombre = nombre;
         this.apellido = apellido;

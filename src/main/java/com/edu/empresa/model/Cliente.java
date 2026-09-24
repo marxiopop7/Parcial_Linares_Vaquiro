@@ -1,6 +1,6 @@
 package com.edu.empresa.model;
 
-public class Cliente extends Personas {
+public class Cliente extends Persona {
     
     public Cliente() {
         super();

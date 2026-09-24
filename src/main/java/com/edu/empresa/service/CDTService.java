@@ -5,11 +5,12 @@ import com.edu.empresa.model.CDT;
 import com.edu.empresa.model.Cliente;
 import com.edu.empresa.util.JsonManagerCDT;
 
+import java.io.File;
 import java.util.List;
 
 public class CDTService {
     public JsonManagerCDT jsonManager;
-    private final String RUTA_ARCHIVO = "historico_cdts.json";
+    private final String RUTA_ARCHIVO = System.getProperty("user.home") + File.separator + "Downloads" + File.separator + "historico_cdts.json";
 
     public CDTService() {
         this.jsonManager = new JsonManagerCDT();
@@ -17,7 +18,6 @@ public class CDTService {
 
     public List<CDT> obtenerHistorico() {
         List<CDT> historico = jsonManager.leerLista(RUTA_ARCHIVO, CDT.class);
-        // RECALCULAR los valores ignorados en el JSON para que no salgan en 0
         if (historico != null) {
             for (CDT cdt : historico) {
                 cdt.calcularCDT();
@@ -44,7 +44,6 @@ public class CDTService {
         List<CDT> historico = obtenerHistorico();
         for (int i = 0; i < historico.size(); i++) {
             if (historico.get(i).getCliente().getDocId().equals(docId)) {
-                // Crear una nueva instancia limpia para reemplazar la anterior
                 CDT actualizado = new CDT(cliente);
                 actualizado.setInversion(inversion);
                 actualizado.setPlazoDias(plazoDias);
@@ -65,7 +64,7 @@ public class CDTService {
             if (historico.get(i).getCliente().getDocId().equals(docId)) {
                 historico.remove(i);
                 eliminado = true;
-                break; // Rompe el ciclo para eliminar solo UNO
+                break; 
             }
         }
         if (eliminado) {

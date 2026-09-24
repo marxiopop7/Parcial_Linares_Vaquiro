@@ -35,7 +35,6 @@ public class CDT {
     }
 
     public double calcularRetencionFuente() {
-        // Asumiendo un estándar, puedes ajustarlo a la lógica de si declara renta o no
         return this.gananciaBruta * 0.04; 
     }
 

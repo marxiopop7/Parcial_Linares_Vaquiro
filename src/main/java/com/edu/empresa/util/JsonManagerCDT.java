@@ -7,14 +7,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class JsonManagerCDT {
-    public String rutaArchivo;
+    
     public ObjectMapper mapper;
 
     public JsonManagerCDT() {
         this.mapper = new ObjectMapper();
-        // Esta línea habilita el formato estructurado (pretty print) en el JSON
         this.mapper.enable(SerializationFeature.INDENT_OUTPUT);
-        this.rutaArchivo = "historico_cdts.json";
+        
     }
 
     public ObjectMapper getMapper() {

@@ -17,7 +17,6 @@ public class CDTBean implements Serializable {
     
     private static final long serialVersionUID = 1L;
 
-    // Patrones de validación
     private static final Pattern PATRON_NUMEROS = Pattern.compile("^\\d+$");
     private static final Pattern PATRON_LETRAS = Pattern.compile("^[A-Za-zÁÉÍÓÚÜáéíóúüÑñ\\s]+$");
     private static final Pattern PATRON_CORREO = Pattern.compile("^[\\w.+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$");
@@ -46,10 +45,9 @@ public class CDTBean implements Serializable {
 
     public void calcular() {
         try {
-            // 1. Ejecutar validaciones estrictas
+            
             validarFormatoCampos();
 
-            // 2. Validar que la identificación sea única si es un registro nuevo
             if (!modoEdicion) {
                 for (CDT hist : listaHistorico) {
                     if (hist.getCliente().getDocId().equals(cdt.getCliente().getDocId())) {
@@ -67,7 +65,6 @@ public class CDTBean implements Serializable {
             limpiar();
             
         } catch (IllegalArgumentException e) {
-            // Captura los errores de validación y los muestra en pantalla
             mostrarMensaje(FacesMessage.SEVERITY_ERROR, "Error de Validación", e.getMessage());
         } catch (Exception e) {
             mostrarMensaje(FacesMessage.SEVERITY_ERROR, "Error del Sistema", "Ocurrió un error inesperado.");
@@ -77,7 +74,6 @@ public class CDTBean implements Serializable {
     public void perpararEdicion(CDT cdtSeleccionado) {
         Cliente cli = cdtSeleccionado.getCliente();
         
-        // Clonar el cliente para evitar modificar la lista directamente antes de guardar
         Cliente cliEdicion = new Cliente(
             cli.getDocId(),
             cli.getNombre(),
@@ -122,7 +118,6 @@ public class CDTBean implements Serializable {
     private void validarFormatoCampos() {
         Cliente cli = cdt.getCliente();
         
-        // Validaciones con Regex
         if (cli.getDocId() == null || !PATRON_NUMEROS.matcher(cli.getDocId().trim()).matches()) {
             throw new IllegalArgumentException("La identificación debe contener solo números.");
         }
@@ -139,7 +134,6 @@ public class CDTBean implements Serializable {
             throw new IllegalArgumentException("El teléfono debe contener solo números.");
         }
         
-        // Validaciones de negocio exigidas
         if (cdt.getInversion() < 2000000) {
             throw new IllegalArgumentException("El valor a invertir debe ser mínimo $2.000.000.");
         }
@@ -155,7 +149,6 @@ public class CDTBean implements Serializable {
         FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(severidad, titulo, detalle));
     }
 
-    // Getters y Setters
     public CDT getCdt() { return cdt; }
     public void setCdt(CDT cdt) { this.cdt = cdt; }
 
